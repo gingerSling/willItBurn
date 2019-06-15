@@ -1,0 +1,1 @@
+START cmd.exe /k "cd C:\Users\Pablosky\Desktop\thisWillBeOurTime\willItBurn-\burnItBot\writer & python "bot.py" CAzwzEHqy2zYtQ d5SBs9S3HFBtLELjM9mAUPP2mcw 123qweASDzxc whateveryoufeellike willItBurnBot 60"

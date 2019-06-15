@@ -1,0 +1,6 @@
+gif
+image
+news
+other
+self
+video

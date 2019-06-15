@@ -1,0 +1,2 @@
+gnome-terminal -- bash -c "cd reader/executers && bash linuxExec"
+gnome-terminal -- bash -c "cd writer && bash writeWhileExec"
