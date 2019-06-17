@@ -135,9 +135,8 @@ findCloser<-function(dat,time){
   bind_rows(res)
   
 }
-traza<-c()
-##Read the data
-setwd("/home/papis/Escritorio/willItBurnBotOld/burnItBot/writer//")
+##Read the data (ite needs the absolut path)
+setwd("/burnItBot/writer/")
 #wd<-getwd()
 #setwd("temp")
 #temp = list.files(pattern="*.csv")
@@ -160,40 +159,30 @@ dat<-dat[,!(colnames(dat) %in% "hot")]
 modelC<-xgb.load("files/modelC")
 modelR<-xgb.load("files/modelR")
 
-traza<-c(traza,"Datos y modelos leidos")
-writeLines(traza,"traza.txt")
 
-##Transformations to the data
+##Transforming the data
 dat$tsc<-dat$measured-dat$created
 dat$hc<-substr(anytime(dat$created),12,13)
 dat$wd<-weekdays(as.Date(substr(anytime(dat$created),1,20),'%Y-%m-%d'),abbreviate = TRUE)
-traza<-c(traza,"Modificaciones basicas")
-traza<-c(traza,"Esto es nuevo")
-writeLines(traza,"traza.txt")
+
 
 ##Remove ids younger than 750 secs
 actTime<-acTime<-as.numeric(as.POSIXct(Sys.time()))
 aux<-as.data.frame(dat %>% group_by(id) %>% summarise(unique(created)))
 idsUse<-aux[actTime-aux[,2]>750,]$id
 dat<-dat[dat$id %in% idsUse,]
-traza<-c(traza,"Jovenes fuera")
-writeLines(traza,"traza.txt")
 
 ##Remove ids that burnt or that we have already predicted their deaths
 hasNotBurnt<-read.csv("files/itHasNotBurnt.csv")
 hasBurnt<-read.csv("files/itHasBurnt.csv")
 dat<-dat[!(dat$id %in% hasNotBurnt$id),]
 dat<-dat[!(dat$id %in% hasBurnt$id),]
-traza<-c(traza,"Adios a los ya quemados")
-writeLines(traza,"traza.txt")
 
 if(dim(dat)[1]<1)
 	stop("No new posts to analyze yet")
 
 ##Revisar esto, a lo mejor se quiere anadir el weekday y el hc se ha pasado a integers y que quitar
 dat10<-findCloser(dat,c(300,600))
-traza<-c(traza,"dat10 creado")
-writeLines(traza,"traza.txt")
 
 if(dim(dat10)[1]!=0){
 dat10<-dat10[,-5]
@@ -201,37 +190,23 @@ dat10<-dat10[,-5]
 datM<-as.data.frame(dat %>% group_by(id) %>% summarise(hc=unique(hc),wd=unique(wd),title=nchar(as.character(unique(title))),body=unique(body)[1],subreddit=unique(subreddit)))
 #datM<-as.data.frame(dat %>% group_by(id) %>% summarise(hot=any(hot=="True"),hc=unique(hc),wd=unique(wd),title=nchar(as.character(unique(title))),body=unique(body)[1],is_self=any(is_self=="True"),subreddit=unique(subreddit)))
 datF<-merge(dat10,datM,by.x="id",by.y="id")
-traza<-c(traza,"datF creado")
-writeLines(traza,"traza.txt")
-
 
 urlsT<-as.data.frame(dat %>% group_by(id) %>% summarise(url=unique(url),isSelf=unique(as.integer(is_self))))
 urlsT$isSelf<-ifelse(urlsT$isSelf==2,1,0)
 urlsT<-whatIsIt(urlsT)
 datF<-merge(datF,urlsT[,-2],by="id")
-traza<-c(traza,"datF merfgeado con urls creado")
-writeLines(traza,"traza.txt")
 
 histSub<-read.csv("files/histSub.csv")
 datF<-merge(datF,histSub,by="subreddit")
-
-traza<-c(traza,"Cansado de conocerte")
-writeLines(traza,"traza.txt")
 
 vars<-readLines("files/dataVariables.txt")
 classes<-readLines("files/dataClasses.txt")
 datF<-changeClass(datF,vars,classes)
 datF<-addLvlTrain(datF)
-traza<-c(traza,"Justo antes de las predicciones")
-writeLines(traza,"traza.txt")
 
 ##Se ha de ambiar la forma en la que un argo pasa a la historia (primero clasificar y luego regresion)
 ids<-datF$id
-write.csv("yougottadeleteme.csv",x=datF[,-2],row.names=FALSE)
 new_ts <- model.matrix(~.+0,data = datF[,-2])
-traza<-c(traza,"Dimensiones NEW_TS")
-traza<-c(traza,dim(new_ts))
-writeLines(traza,"traza.txt")
 dtest <- xgb.DMatrix(data = new_ts,label = sample(c(TRUE,FALSE),nrow(datF),replace=TRUE))
 preds<-predict(modelC,dtest,predictor="gpu_predictor")
 res<-as.data.frame(dat %>% group_by(id) %>% summarise(unique(created)))
@@ -243,14 +218,10 @@ resB<-res[res$pred>=0.5,c(1,2)]
 if(dim(resB)[1]>0){
 new_ts <- model.matrix(~.+0,data = datF[preds>=0.5,-2])
 dtestR<-xgb.DMatrix(data = new_ts,label = rnorm(nrow(datF[preds>=0.5,])))
-traza<-c(traza,"Hey papip aqui si que estoy 123 veces digo")
-writeLines(traza,"traza.txt")
 predsR<-predict(modelR,dtestR,predictor="gpu_predictor")
 resB$time<-resB$time+predsR
 }
 resNB$time<-rep(0,nrow(resNB))
-traza<-c(traza,"Hey papip aqui si que estoy 3 veces digo")
-writeLines(traza,"traza.txt")
 hasNotBurnt<-rbind(hasNotBurnt,resNB)
 write.csv("files/itHasNotBurnt.csv",x=hasNotBurnt,row.names=FALSE)
 write.csv("files/itWillBurn.csv",x=resB,row.names=FALSE)

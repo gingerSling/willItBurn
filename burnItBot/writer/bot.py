@@ -13,13 +13,6 @@ import os
 import subprocess
 import time
 import shutil
-##Mail: abotwillbe@gmail.com
-##Pass: 123qweASDzxc
-##usr: willItBurnBot
-##Pass: 123qweASDzxc
-##Client_Id: CAzwzEHqy2zYtQ
-##Client_Secret: d5SBs9S3HFBtLELjM9mAUPP2mcw
-###Recordar que la cuenta a usar ha de tener el mail verificado y algo de karma (15-30)
 
 ##Hay que anadir un while para dar limite de tiempo
 def suppress_stdout():
@@ -113,10 +106,10 @@ def commentMeUp(redSession,limit):
         dat=dat[-(dat.id.isin(checked))]
         dat.to_csv('files/dat.csv', header=True,index=False)
         
-        #Linux
-        subprocess.call (["/usr/bin/Rscript", "--vanilla", "/home/papis/Escritorio/willItBurnBotOld/burnItBot/writer/predictPost.r"])
+        #Linux (it needs the absolut path)
+        subprocess.call (["/usr/bin/Rscript", "--vanilla", "burnItBot/writer/predictPost.r"])
         #Windows
-        #subprocess.call (["C:/Program Files/R/R-3.5.2/bin/Rscript.exe", "--vanilla", "C:/Users/Pablosky/Desktop/willItBurnBotOld/burnItBot/writer/predictPost.r"])
+        #subprocess.call (["C:/Program Files/R/R-3.5.2/bin/Rscript.exe", "--vanilla", "burnItBot/writer/predictPost.r"])
         itWillBurn = pd.read_csv('files/itWillBurn.csv', encoding='utf8')
         itWillBurn.columns = ['id','time']
         itHasBurnt = pd.read_csv('files/itHasBurnt.csv', encoding='utf8')

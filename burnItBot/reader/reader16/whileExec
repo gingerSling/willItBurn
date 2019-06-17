@@ -1,9 +1,0 @@
-clientId=$1
-clientSecret=$2
-pass=$3
-userA=4
-user=$5
-while :
-do
-python scrapSubredditNewVers.py $clientId $clientSecret $pass $userA $user
-done

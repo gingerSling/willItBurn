@@ -1,0 +1,13 @@
+With these directories and script one can execute a reddit script to predict wheter or not a post will hit the hot sections of its subreddit. It is composed by 2 main modules: The writer and the reader.
+
+Writer Module:
+
+Basically the write its composed by a python script called "bot.py" and an R script called "predictPost.r" . The objective of "bot.py" is to deal with post that the readers read and to comment on a submission that the "predictPost.r" predicts as hot. The "predictPost.r" goal is as its name states to predict if a post is going viral, it process the data and then run the models que have already saved. 
+
+It is needed in both scripts to add the absolute paths indicated.
+It is also needed to have a reddit account to comment on the psot. 
+
+
+Reader Module
+
+The reader module is composed of 3 main scripts: one that reads the ids of new posts "server.py", another that keeps track of what is in the hot secetion of the subreddit of interest and one that keeps track of the developments read by server. We have created many "reader" because reddit has a limit on how much each account can read, so the server indicates each reader what to read. We recommend to create some more accounts than the ones we are giving in order to have an appropiate reading speed.
