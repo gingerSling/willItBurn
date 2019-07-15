@@ -52,11 +52,11 @@ def followMe(reddit,ids):
     posts=[]
     for ident in ids:
         submission = reddit.submission(id=ident)
-        posts.append([submission.title,submission.author,submission.edited,submission.is_self,submission.locked,submission.spoiler,submission.stickied, submission.score, submission.id, submission.subreddit, submission.url, submission.num_comments, submission.selftext, submission.created_utc,time.time()])
-    posts = pd.DataFrame(posts,columns=['title','author','edited','is_self','locked','spoiler','stickied', 'score','id', 'subreddit', 'url', 'num_comments','body', 'created','measured'])
+        posts.append([submission.title,submission.author,submission.edited,submission.is_self,submission.locked,submission.spoiler,submission.stickied, submission.score,submission.upvote_ratio , submission.id, submission.subreddit, submission.url, submission.num_comments, submission.selftext, submission.created_utc,time.time()])
+    posts = pd.DataFrame(posts,columns=['title','author','edited','is_self','locked','spoiler','stickied', 'score', 'upvote_ratio','id', 'subreddit', 'url', 'num_comments','body', 'created','measured'])
     posts["body"] = posts["body"].apply(funcAllNight)
     csvfile = pd.read_csv(fileName, encoding='utf8')
-    csvfile.columns = ['title','author','edited','is_self','locked','spoiler','stickied', 'score','id', 'subreddit', 'url', 'num_comments','body', 'created','measured']
+    csvfile.columns = ['title','author','edited','is_self','locked','spoiler','stickied', 'score', 'upvote_ratio','id', 'subreddit', 'url', 'num_comments','body', 'created','measured']
     df=pd.concat([posts,csvfile])
     df=df.sort_values(by=['measured'])
     dfNM=df.drop(['measured'], axis=1)
@@ -77,7 +77,7 @@ def forgotten(ids):
     times=[]
     fileName="post.csv"
     csvfile = pd.read_csv(fileName, encoding='utf8')
-    csvfile.columns = ['title','author','edited','is_self','locked','spoiler','stickied', 'score', 'id', 'subreddit', 'url', 'num_comments', 'body', 'created','measured']
+    csvfile.columns = ['title','author','edited','is_self','locked','spoiler','stickied', 'score', 'upvote_ratio', 'id', 'subreddit', 'url', 'num_comments', 'body', 'created','measured']
     csvfile=csvfile.drop_duplicates('id')
     for ident in ids:
         submission = csvfile[(csvfile['id'] == ident)]
@@ -85,7 +85,7 @@ def forgotten(ids):
             times.append(600)
         else:
             times.append(trn-submission.created.values)
-    res=[ j for (i,j) in zip(times,ids) if i >= 1500 ]
+    res=[ j for (i,j) in zip(times,ids) if i >= 3600 ]
     done=pd.read_csv('done.csv', encoding='utf8')
     done.columns = ['id']
     res=pd.DataFrame(res,columns=['id'])
@@ -109,10 +109,11 @@ def ScrapMeUp(reddit,until):
         print(datetime.datetime.now())
         posts = pd.read_csv('doing.csv', encoding='utf8')
         posts.columns = ['id']
+        if(posts.shape[0]==0):
+            time.sleep(5)
         print(posts.shape[0])
         print(posts.id.values.tolist())
         followMe(reddit,posts.id.values.tolist())
-        amIHot(posts.id.values.tolist())
         forgotten(posts.id.values.tolist())
         update()
             

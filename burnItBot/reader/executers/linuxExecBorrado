@@ -1,6 +1,0 @@
-bash linuxResetReaders
-echo Waiting 5 seconds before excuting the readers
-sleep 5s
-gnome-terminal -- bash -c "bash linuxExecReaders"
-gnome-terminal -- bash -c "cd ../server && bash whileExecHot tBssZP1hII0h3w rfbZVQQukZb8BLoZQlO00xDRk04 123456789 whatever wouldYouBeMyDaddy 604800"
-gnome-terminal -- bash -c "cd ../server && bash whileExecServer 6V1k0oicam7qmw EG83lBufvRA6DWpp1gyBLTpAeDA 123456789 whatever iGuessItsCrazy 604800"

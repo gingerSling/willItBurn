@@ -1,0 +1,3 @@
+ls -d reader*/ | xargs -n 1 cp -v virginFiles/doing.csv
+ls -d reader*/ | xargs -n 1 cp -v virginFiles/hotsInfo.csv
+

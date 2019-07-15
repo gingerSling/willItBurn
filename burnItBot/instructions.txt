@@ -1,13 +1,34 @@
-With these directories and script one can execute a reddit script to predict wheter or not a post will hit the hot sections of its subreddit. It is composed by 2 main modules: The writer and the reader.
 
-Writer Module:
+INTRODUCTION
 
-Basically the write its composed by a python script called "bot.py" and an R script called "predictPost.r" . The objective of "bot.py" is to deal with post that the readers read and to comment on a submission that the "predictPost.r" predicts as hot. The "predictPost.r" goal is as its name states to predict if a post is going viral, it process the data and then run the models que have already saved. 
-
-It is needed in both scripts to add the absolute paths indicated.
-It is also needed to have a reddit account to comment on the psot. 
+	Bot whose porpouse of life is to predict within 15 minutes wheter or not a post will get to the 0.1 hottest posts of its subreddit.
 
 
-Reader Module
+READER
 
-The reader module is composed of 3 main scripts: one that reads the ids of new posts "server.py", another that keeps track of what is in the hot secetion of the subreddit of interest and one that keeps track of the developments read by server. We have created many "reader" because reddit has a limit on how much each account can read, so the server indicates each reader what to read. We recommend to create some more accounts than the ones we are giving in order to have an appropiate reading speed.
+	This module consist of 2 principal components: one that imports and follows the newest reddit submissions; another that imports the
+	hottest posts of the subreddit in consideration.
+
+
+WRITER
+
+	The writer is basically a model built on R that predicts if a post will get to hot. If it predict that a certain post will indeed
+	burn, it will take a screenshot of the reddit url and send it to the indicated mail. It will use Selenium.
+	
+	It will import the info readed by the reader and will look for information of the users who posted the information
+	
+MAKE IT WORK
+
+	Due to the high volume of post made in a day we use 24 reddit accounts. 3 accounts are for checking what is new in the analyzed subreddits;
+	2 are for checking what gets hot or top in those subreddits; 18 are for keep track of the post that arrive to new; 1 that predicts wether or not a post
+	get to hot.
+	
+	You will need to add the reddit accounts in the following files:
+		- "reader/executers/linuxExecReaders"
+		- "reader/executers/linuxExec"
+		- "writer/writeWhileExec"
+		
+	You will also have to give a from and a to gmails in and the password of the sender"writer/bot.py   -  line 25,26,52"
+	
+	In case you dont want to send any email but would like to have the screenshot you can change the last argument
+	of the call to bot.py in "writer/writeWhileExec" to something different to 1.

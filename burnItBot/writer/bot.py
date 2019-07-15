@@ -13,8 +13,47 @@ import os
 import subprocess
 import time
 import shutil
+from selenium import webdriver
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
-##Hay que anadir un while para dar limite de tiempo
+
+def sendMail(id,url):
+    fromaddr = "sender@gmail.com"
+    toaddr = ["reciever1@fgh.com","reciever2@asd.com"]
+
+    msg = MIMEMultipart()
+
+    msg['From'] = fromaddr
+    msg['To'] = ", ".join(toaddr)
+    msg['Subject'] = "This post will burn"
+
+    body = url
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    filename = 'screenshots/'+id+'.png'
+    attachment = open('screenshots/'+id+'.png', "rb")
+
+    part = MIMEBase('application', 'octet-stream')
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+
+    msg.attach(part)
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login(fromaddr, "YourPass")
+    text = msg.as_string()
+    server.sendmail(fromaddr, toaddr, text)
+    server.quit()
+
 def suppress_stdout():
     with open(os.devnull, "w") as devnull:
         old_stdout = sys.stdout
@@ -91,9 +130,10 @@ def readPosts(dir):
     return dat
 
 
-def commentMeUp(redSession,limit):
+def commentMeUp(redSession,email):
     until=time.time() + limit
     while time.time() < until:
+        time.sleep(5)
         print("Another look to latest submissions")
         src='../reader'
         dat=readPosts(src)
@@ -106,34 +146,50 @@ def commentMeUp(redSession,limit):
         dat=dat[-(dat.id.isin(checked))]
         dat.to_csv('files/dat.csv', header=True,index=False)
         
-        #Linux (it needs the absolut path)
-        subprocess.call (["/usr/bin/Rscript", "--vanilla", "burnItBot/writer/predictPost.r"])
+        #Linux
+        subprocess.call (["Rscript", "--vanilla", "predictPost.r"])
         #Windows
-        #subprocess.call (["C:/Program Files/R/R-3.5.2/bin/Rscript.exe", "--vanilla", "burnItBot/writer/predictPost.r"])
+        #subprocess.call (["C:/Program Files/R/R-3.5.2/bin/Rscript.exe", "--vanilla", "C:/Users/Pablosky/Desktop/willItBurnBotOld/burnItBot/writer/predictPost.r"])
         itWillBurn = pd.read_csv('files/itWillBurn.csv', encoding='utf8')
-        itWillBurn.columns = ['id','time']
+
+        itWillBurn.columns = ['id','url']
+
         itHasBurnt = pd.read_csv('files/itHasBurnt.csv', encoding='utf8')
-        itHasBurnt.columns = ['id','time','responseTime']
-        posts = [item for item in itWillBurn.id.values if item not in itHasBurnt.id.values]
-        
-        for ident in posts:
-            submission = redSession.submission(id=ident)
-            reply_template =submission.title + '     This will burn in ' + str(itWillBurn[(itWillBurn['id'] == ident)].time.values[0])
-            print(reply_template)
-            url_title = quote_plus(submission.title)
-            reply_text = reply_template.format(url_title)
-            #submission.reply(reply_text)
+
+        itHasBurnt.columns = ['id','responseTime']
+
+        posts = itWillBurn.merge(itHasBurnt, on=['id'], how='left', indicator=True)
+        posts=posts[posts['_merge']=='left_only']
+        subRC = pd.read_csv('subRM.csv', encoding='utf8')
+        subRC.columns = ['subreddit','meanPost']
+        for ident in posts.id.values.tolist():
+            url=posts[posts['id']==ident].url.values[0]
+            already=pd.read_csv("../reader/server/whosHot.csv", encoding='utf8')
+            already.columns = ['id','time']
+            submission = reddit.submission(id=ident)
+            aux=subRC[subRC['subreddit']==submission.subreddit.title].meanPost.values.tolist()[0]
+            nPosts=int(round(aux))
+            if nPosts>15:
+                nPosts=15
+
+            driver = webdriver.Chrome("/usr/bin/chromedriver")
+            driver.get(url)
+            driver.save_screenshot('screenshots/' + ident + ".png")
+            driver.close()
+        if(email==1):
+            sendMail(ident,url)
             aux=[]
-            aux=itWillBurn[(itWillBurn['id'] == ident)].values.tolist()
-            aux = [item for sublist in aux for item in sublist]
-            aux.append(time.time())
-            aux=pd.DataFrame(aux).transpose()
-            aux.columns = ['id','time','responseTime']
+
+            aux.append([ident,time.time()])
+
+            aux = pd.DataFrame(aux,columns=['id','responseTime'])
+
             itHasBurnt=pd.concat([itHasBurnt,aux])
             
         os.remove('files/itHasBurnt.csv')
         itHasBurnt.to_csv('files/itHasBurnt.csv', header=True,index=False)
     
+
 
 if __name__ == "__main__":
     clId = str(sys.argv[1]).strip()
@@ -141,12 +197,13 @@ if __name__ == "__main__":
     passW = str(sys.argv[3]).strip()
     userA = str(sys.argv[4]).strip()
     userN = str(sys.argv[5]).strip()
-    limite = int(sys.argv[6])
+    email = int(sys.argv[6])
 
-reddit = praw.Reddit(client_id=clId,
-				 client_secret=clS,
-				 password=passW,
+
+reddit = praw.Reddit(client_id='CAzwzEHqy2zYtQ',
+                 client_secret='d5SBs9S3HFBtLELjM9mAUPP2mcw',
+                 password='123qweASDzxc',
                  user_agent='dudy',
-				 username=userN)
+                 username='willItBurnBot')
 
-commentMeUp(reddit,limite)
+commentMeUp(reddit,email)

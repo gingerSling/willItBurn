@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "scrapSubredditNewVers.py", line 137, in <module>
+    ScrapMeUp(reddit,(time.time()+604800))
+  File "scrapSubredditNewVers.py", line 118, in ScrapMeUp
+    update()
+  File "scrapSubredditNewVers.py", line 103, in update
+    os.remove('doing.csv')   
+FileNotFoundError: [Errno 2] No such file or directory: 'doing.csv'

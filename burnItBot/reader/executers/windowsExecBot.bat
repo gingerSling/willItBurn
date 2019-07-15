@@ -1,6 +1,0 @@
-START cmd.exe /k "cd ../reader1 && python scrapSubredditNewVers.py apqVonJwNzp4IA xoIVNJMwfrKSD-qzJec3SNly2oc 123456789 whatever soyimhim"
-START cmd.exe /k "cd ../reader2 && python scrapSubredditNewVers.py oS9MgZM1c4cHTA yf20CTAN6QDXtAu0zEdqrJc-NXY cinco=5*1 whatever yesYouVeSeenMeBefore"
-START cmd.exe /k "cd ../reader3 && python scrapSubredditNewVers.py IahZv9N8dM-itg 3bhRqLmmfxxlU6Sb5LwjAs6zO8A 123456789 whatever whateverIu"
-START cmd.exe /k "cd ../reader4 && python scrapSubredditNewVers.py sF-E9iOR6GvfMQ 0U8s1fdxVOXAjxLGlBk9yQPiIwU 123456789 whatever sityofdad"
-START cmd.exe /k "cd ../reader5 && python scrapSubredditNewVers.py z7IBJPR2VgJQ4g T7eF3m_m03J0UjdZ8588ScaHa5c 123456789 whateveryoufeellike otraCuentaFalsa"
-START cmd.exe /k "cd ../reader6 && python scrapSubredditNewVers.py n8fN-05zgIALww O-i5FAY2B6SvuPe_TfwPDAOfra4 123456789 whateveryoufeellike feellingGood"

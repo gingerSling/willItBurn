@@ -20,15 +20,34 @@ def checkAv(av):
         cont=cont+1
     return res
   
-def serveMe(reddit,limit):
+def serveMe(reddit,limit,subs):
     until=time.time() + limit
-    subR=['funny','pics','showerthoughts','the_donald','unpopularopinion','aww','gaming','videos','jokes','worldnews','art','sex','todayilearned','explainlikeimfive','starwars','movies','earthporn','trashy','horror','television','gifs','science','pcgaming','news','publicfreakout','choosingbeggars','lifeprotips','backpacking','math','japantravel','cringe','nevertellmetheodds','quityourbullshit','books','diy','outoftheloop','eatcheapandhealthy','datascience','sports']
+    
+    if subs==1: 
+        subR=['futurology','music','funny','gaming','worldnews','todayilearned','explainlikeimfive','television','pcgaming','choosingbeggars','lifeprotips','outoftheloop','quityourbullshit','datascience']
+    elif subs==2:
+        subR=['technology','aww','pics','videos','art','earthporn','publicfreakout','starwars','sports','gifs','math','backpacking','eatcheapandhealthy','science']
+    elif subs==3:
+        subR=['wtf','showerthoughts','unpopularopinion','jokes','sex','movies','horror','news','trashy','books','diy','japantravel','cringe','nevertellmetheodds']
+
     fileNames=list(filter(lambda x:'reader' in x, next(os.walk('..'))[1]))
     fileNames = ['../'+item + '/doing.csv'for item in fileNames]
-    
+    pathHistoric=''
+    if subs==1: 
+        fileNames=fileNames[0:6]
+        pathHistoric='historic1.csv'
+    elif subs==2:
+        fileNames=fileNames[6:13]
+        pathHistoric='historic2.csv'
+    elif subs==3:
+        fileNames=fileNames[13:19]
+        pathHistoric='historic3.csv'
+    print(fileNames)
+    time.sleep(10)
     while time.time() < until:
         print('Lets see whats new')
-        historic = pd.read_csv('historic.csv', encoding='utf8')
+        print(datetime.datetime.now())
+        historic = pd.read_csv(pathHistoric, encoding='utf8')
         historic.columns = ['id']
         files=[]
         for i in fileNames:
@@ -47,6 +66,7 @@ def serveMe(reddit,limit):
                 else:
                     break
         news = [item for item in news if item not in historic.id.values]
+        print(news)
         disp=checkAv(av)
         if len(disp) < len(news):
             news=news[0:len(disp)]
@@ -59,8 +79,8 @@ def serveMe(reddit,limit):
             files[i].to_csv(fileNames[i], header=True,index=False)
         news = pd.DataFrame(news,columns=['id'])
         historic=pd.concat([historic,news])
-        os.remove('historic.csv')
-        historic.to_csv('historic.csv', header=True,index=False)
+        os.remove(pathHistoric)
+        historic.to_csv(pathHistoric, header=True,index=False)
 
 
 if __name__ == "__main__":
@@ -70,6 +90,9 @@ if __name__ == "__main__":
     userA = str(sys.argv[4]).strip()
     userN = str(sys.argv[5]).strip()
     limit = int(sys.argv[6])
+    subs = int(sys.argv[7])
+
+#subR=[,,,]
 
 reddit = praw.Reddit(client_id=clId,
 				 client_secret=clS,
@@ -77,4 +100,4 @@ reddit = praw.Reddit(client_id=clId,
                  user_agent='dudy',
 				 username=userN)
 
-serveMe(reddit,limit)
+serveMe(reddit,limit,subs)

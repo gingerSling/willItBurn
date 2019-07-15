@@ -1,3 +1,6 @@
+gnome-terminal -- bash -c "cd ../server && bash whileExecHot clientId clientSecret password doesntMatter user TimeOfExecution(inSeconds)"
+gnome-terminal -- bash -c "cd ../server && bash whileExecTop clientId clientSecret password doesntMatter user TimeOfExecution(inSeconds)"
+gnome-terminal -- bash -c "cd ../server && bash whileExecServer clientId clientSecret password doesntMatter user TimeOfExecution(inSeconds)"
+gnome-terminal -- bash -c "cd ../server && bash whileExecServer clientId clientSecret password doesntMatter user TimeOfExecution(inSeconds)"
+gnome-terminal -- bash -c "cd ../server && bash whileExecServer clientId clientSecret password doesntMatter user TimeOfExecution(inSeconds)"
 gnome-terminal -- bash -c "bash linuxExecReaders"
-gnome-terminal -- bash -c "cd ../server && bash whileExecHot tBssZP1hII0h3w rfbZVQQukZb8BLoZQlO00xDRk04 123456789 whatever wouldYouBeMyDaddy 604800"
-gnome-terminal -- bash -c "cd ../server && bash whileExecServer 6V1k0oicam7qmw EG83lBufvRA6DWpp1gyBLTpAeDA 123456789 whatever iGuessItsCrazy 604800"

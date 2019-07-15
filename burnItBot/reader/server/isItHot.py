@@ -30,7 +30,7 @@ def getMeanPost(reddit,subreddit):
 
 def whosHot(reddit,limit):
     until=time.time() + limit
-    subR=['funny','pics','showerthoughts','the_donald','unpopularopinion','aww','gaming','videos','jokes','worldnews','art','sex','todayilearned','explainlikeimfive','starwars','movies','earthporn','trashy','horror','television','gifs','science','pcgaming','news','publicfreakout','choosingbeggars','lifeprotips','backpacking','math','japantravel','cringe','nevertellmetheodds','quityourbullshit','books','diy','outoftheloop','eatcheapandhealthy','datascience','sports']
+    subR=['wtf','technology','futurology','funny','pics','showerthoughts','the_donald','unpopularopinion','aww','gaming','videos','jokes','worldnews','art','sex','todayilearned','explainlikeimfive','starwars','movies','earthporn','trashy','horror','television','gifs','science','pcgaming','news','publicfreakout','choosingbeggars','lifeprotips','backpacking','math','japantravel','cringe','nevertellmetheodds','quityourbullshit','books','diy','outoftheloop','eatcheapandhealthy','datascience','sports','music']
     subRC = pd.read_csv('subRM.csv', encoding='utf8')
     subRC.columns = ['subreddit','meanPost']
     while time.time() < until:
@@ -40,10 +40,14 @@ def whosHot(reddit,limit):
         whosHot.columns = ['id','time']
         for subs in subR:
             sub=reddit.subreddit(subs)
-            aux=subRC[subRC['subreddit']==sub.title]
+            try:
+                aux=subRC[subRC['subreddit']==sub.title]
+            except:
+                print('there was an error on the subreddit ' + subs)
+                continue
             nPosts=int(round(aux['meanPost']*0.1))
             if nPosts>15:
-                nPosts=15
+                nPosts=15   
             for j in sub.hot(limit=nPosts):
                 id = j.id
                 if(id not in hots.id.values):

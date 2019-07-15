@@ -1,5 +1,4 @@
 Art
-AskReddit
 aww
 backpacking
 books
@@ -19,6 +18,7 @@ Jokes
 LifeProTips
 math
 movies
+Music
 nevertellmetheodds
 news
 OutOfTheLoop

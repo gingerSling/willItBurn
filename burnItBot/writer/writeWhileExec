@@ -1,4 +1,4 @@
 while :
 do
-python bot.py client_Id client_Secret password whatever willItBurnBot 604800
+python bot.py clientIdWriter clientSecretWriter passwordWriter doesntMatterWriter userWriter 1
 done
