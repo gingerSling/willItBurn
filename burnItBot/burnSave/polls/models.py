@@ -19,3 +19,11 @@ class rawDat(models.Model):
     created = models.CharField(max_length=80)
     measured = models.CharField(max_length=80)
     id  = models.CharField(max_length=110,primary_key=True)
+	
+class whosHot(models.Model):
+    time = models.CharField(max_length=80)
+    id  = models.CharField(max_length=110,primary_key=True)
+	
+class whosTop(models.Model):
+    time = models.CharField(max_length=80)
+    id  = models.CharField(max_length=110,primary_key=True)
