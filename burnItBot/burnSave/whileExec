@@ -1,0 +1,7 @@
+
+while :
+do
+find -type f  -name "error" -size +1M -delete
+python newRawDat.py
+sleep 30m
+done 2>error
